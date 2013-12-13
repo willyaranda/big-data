@@ -5,10 +5,9 @@ import org.willy.ejercicios.hist.maxmin.MaxMinDriver;
 
 public class MainRunner {
 	/**
-	 * Le program.
-	 * First we run the MaxMin MR program.
-	 * Then the Histogram one.
+	 * Le program. First we run the MaxMin MR program. Then the Histogram one.
 	 * And fun.
+	 * 
 	 * @param args
 	 * @throws Exception
 	 */
