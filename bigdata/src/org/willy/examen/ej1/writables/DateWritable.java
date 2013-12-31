@@ -10,13 +10,13 @@ import org.apache.hadoop.io.WritableComparable;
 
 public class DateWritable extends Configured implements
 		WritableComparable<DateWritable> {
-		
+
 	private IntWritable month;
 	private IntWritable day;
 	private IntWritable hour;
 	private IntWritable minute;
 	private IntWritable second;
-	
+
 	public IntWritable getMonth() {
 		return month;
 	}
@@ -60,8 +60,8 @@ public class DateWritable extends Configured implements
 	public DateWritable() {
 	}
 
-	public DateWritable(IntWritable month, IntWritable day, IntWritable hour, IntWritable minute,
-			IntWritable second) {
+	public DateWritable(IntWritable month, IntWritable day, IntWritable hour,
+			IntWritable minute, IntWritable second) {
 		this.month = new IntWritable(month.get());
 		this.day = new IntWritable(day.get());
 		this.hour = new IntWritable(hour.get());
@@ -91,7 +91,7 @@ public class DateWritable extends Configured implements
 	public int hashCode() {
 		return month.hashCode() + day.hashCode();
 	}
-	
+
 	public static DateWritable read(DataInput in) throws IOException {
 		DateWritable d = new DateWritable();
 		d.readFields(in);
@@ -109,13 +109,12 @@ public class DateWritable extends Configured implements
 
 	@Override
 	public String toString() {
-		return "[" + String.format("%02d", day.get()) + "/" +
-	            String.format("%02d", month.get()) + "/" +
-				"2013 " +
-				String.format("%02d", hour.get()) + ":" +
-				String.format("%02d", minute.get()) + ":" +
-				String.format("%02d", second.get()) + "]";
-		}
+		return "[" + String.format("%02d", day.get()) + "/"
+				+ String.format("%02d", month.get()) + "/" + "2013 "
+				+ String.format("%02d", hour.get()) + ":"
+				+ String.format("%02d", minute.get()) + ":"
+				+ String.format("%02d", second.get()) + "]";
+	}
 
 	@Override
 	public void write(DataOutput dataOutput) throws IOException {

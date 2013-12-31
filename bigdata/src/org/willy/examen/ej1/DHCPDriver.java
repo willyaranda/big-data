@@ -75,16 +75,17 @@ public class DHCPDriver extends Configured implements Tool {
 
 		// We can uncomment this to execute only the mapper
 		// (the output will be on the output path)
-		//job.setNumReduceTasks(0);
+		// job.setNumReduceTasks(0);
 
 		// Configure the input and output paths
 		// (check that input does not have any processing and output
 		// is a Path object)
 		FileInputFormat.setInputPaths(job, input);
 		FileOutputFormat.setOutputPath(job, oPath);
-		
+
 		// Defines additional single text based output 'text' for the job
-		MultipleOutputs.addNamedOutput(job, "text", TextOutputFormat.class, DateWritable.class, Text.class);
+		MultipleOutputs.addNamedOutput(job, "text", TextOutputFormat.class,
+				DateWritable.class, Text.class);
 
 		// Wait for the job to finish and return the status
 		boolean success = job.waitForCompletion(true);

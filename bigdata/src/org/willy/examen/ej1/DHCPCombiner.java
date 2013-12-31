@@ -17,7 +17,7 @@ import org.willy.examen.ej1.writables.DateWritable;
  */
 public class DHCPCombiner extends
 		Reducer<DateWritable, Text, DateWritable, Text> {
-	
+
 	/**
 	 * Each call to this method receives an unique Key and their values (wrapped
 	 * in an Iterable interface). Should use

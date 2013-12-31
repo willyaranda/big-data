@@ -22,13 +22,14 @@ public class DHCPReducer extends
 	String generateFileName(DateWritable k, Text v) {
 		return "part-dia-" + k.getDay();
 	}
-	
+
 	private MultipleOutputs<DateWritable, Text> mos;
-	
+
+	@Override
 	public void setup(Context context) {
 		mos = new MultipleOutputs<DateWritable, Text>(context);
 	}
-	
+
 	/**
 	 * Each call to this method receives an unique Key and their values (wrapped
 	 * in an Iterable interface). Should use
@@ -42,10 +43,10 @@ public class DHCPReducer extends
 			mos.write(key, text, generateFileName(key, text));
 		}
 	}
-	
+
 	@Override
-	protected void cleanup(Context context)
-			throws IOException, InterruptedException {
+	protected void cleanup(Context context) throws IOException,
+			InterruptedException {
 		mos.close();
 	}
 

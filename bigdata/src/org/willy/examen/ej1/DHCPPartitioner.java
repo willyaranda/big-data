@@ -8,8 +8,10 @@ public class DHCPPartitioner extends Partitioner<DateWritable, Text> {
 
 	@Override
 	public int getPartition(DateWritable date, Text value, int numPartitions) {
-		int partition = ((date.getMonth().hashCode() + date.getDay().hashCode())^31) % numPartitions;
-		System.out.println("In partitioner, returning " + partition + " out of " + numPartitions);
+		int partition = ((date.getMonth().hashCode() + date.getDay().hashCode()) ^ 31)
+				% numPartitions;
+		System.out.println("In partitioner, returning " + partition
+				+ " out of " + numPartitions);
 		return partition;
 	}
 
