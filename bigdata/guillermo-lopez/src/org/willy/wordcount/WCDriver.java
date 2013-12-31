@@ -1,21 +1,18 @@
-package org.willy.ejercicios.hist;
+package org.willy.wordcount;
 
-import org.apache.hadoop.conf.Configuration;
 import org.apache.hadoop.conf.Configured;
-import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IntWritable;
 import org.apache.hadoop.io.NullWritable;
+import org.apache.hadoop.io.Text;
 import org.apache.hadoop.mapreduce.Job;
 import org.apache.hadoop.mapreduce.lib.input.FileInputFormat;
 import org.apache.hadoop.mapreduce.lib.input.TextInputFormat;
 import org.apache.hadoop.mapreduce.lib.output.FileOutputFormat;
 import org.apache.hadoop.util.Tool;
 import org.apache.hadoop.util.ToolRunner;
-import org.willy.ejercicios.hist.writables.BarWritable;
 
-public class HistDriver extends Configured implements Tool {
+public class WCDriver extends Configured implements Tool {
 
 	/**
 	 * Main method. We just call ToolRunner to run our driver (see run method
@@ -25,7 +22,7 @@ public class HistDriver extends Configured implements Tool {
 	 * @throws Exception
 	 */
 	public static void main(String[] args) throws Exception {
-		ToolRunner.run(new HistDriver(), args);
+		ToolRunner.run(new WCDriver(), args);
 	}
 
 	/**
@@ -35,43 +32,26 @@ public class HistDriver extends Configured implements Tool {
 	 */
 	@Override
 	public int run(String[] args) throws Exception {
-		if (args.length != 3) {
-			System.out.printf("Usage: <input dir> <output dir> <# of bars>");
+		if (args.length != 2) {
+			System.out.printf("Usage: <input dir> <output dir>");
 			return -1;
 		}
 
 		String input = args[0];
 		String output = args[1];
-		String aux = args[2];
-		int barras = Integer.parseInt(aux);
-
-		Path file = new Path(output + "/max-min-output/part-r-00000");
-		FSDataInputStream data = FileSystem.get(file.toUri(), getConf()).open(
-				file);
-		
-		// Let's use the easy, but deprecated, thing
-		float min = Float.parseFloat(data.readLine());
-		float max = Float.parseFloat(data.readLine());
-		data.close();
-
-		Configuration conf = new Configuration(true);
 
 		// Let's create a Path for output and delete if it exists.
 		// If we use getLocal, it gets the local FileSystem. If not, it
 		// tries to load the hdfs from the conf files from Hadoop.
 		Path oPath = new Path(output);
-		FileSystem.get(oPath.toUri(), conf).delete(oPath, true);
-
-		conf.setFloat("min", min);
-		conf.setFloat("max", max);
-		conf.setInt("barras", barras);
+		FileSystem.get(oPath.toUri(), getConf()).delete(oPath, true);
 
 		// The fun part. Create a job.
-		Job job = new Job(conf);
+		Job job = new Job();
 
 		// Set the driver and the name of the job
-		job.setJarByClass(HistDriver.class);
-		job.setJobName("Ej1-histograma");
+		job.setJarByClass(WCDriver.class);
+		job.setJobName("WordCount");
 
 		// The input type for the Mapper. See
 		// http://hadoop.apache.org/docs/current/api/org/apache/hadoop/mapreduce/lib/input/FileInputFormat.html
@@ -82,15 +62,12 @@ public class HistDriver extends Configured implements Tool {
 		// Set our main classes for the Mapper, Reducer and (optionally)
 		// Combiner
 		// (Combiner might be the same as the Reducer)
-		job.setMapperClass(HistMapper.class);
-		job.setReducerClass(HistReducer.class);
-		
-		job.setMapOutputKeyClass(BarWritable.class);
-		job.setMapOutputValueClass(NullWritable.class);
+		job.setMapperClass(WCMapper.class);
+		job.setReducerClass(WCReducer.class);
 
 		// Set the output type for both key and value
-		job.setOutputKeyClass(BarWritable.class);
-		job.setOutputValueClass(IntWritable.class);
+		job.setOutputKeyClass(Text.class);
+		job.setOutputValueClass(NullWritable.class);
 
 		// We can uncomment this to execute only the mapper
 		// (the output will be on the output path)

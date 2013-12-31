@@ -1,11 +1,11 @@
-package org.willy.ejercicios.hist;
+package org.willy.ejercicios.hist.maxmin;
 
 import java.io.IOException;
+import java.util.Iterator;
 
-import org.apache.hadoop.io.IntWritable;
+import org.apache.hadoop.io.FloatWritable;
 import org.apache.hadoop.io.NullWritable;
 import org.apache.hadoop.mapreduce.Reducer;
-import org.willy.ejercicios.hist.writables.BarWritable;
 
 /**
  * Check the specialization of the Reducer class. The first two classes
@@ -16,8 +16,8 @@ import org.willy.ejercicios.hist.writables.BarWritable;
  * @author gll
  * 
  */
-public class HistReducer extends
-		Reducer<BarWritable, NullWritable, BarWritable, IntWritable> {
+public class MaxMinReducer extends
+		Reducer<NullWritable, FloatWritable, NullWritable, FloatWritable> {
 	/**
 	 * See the same for Mapper#cleanup
 	 */
@@ -34,15 +34,31 @@ public class HistReducer extends
 	 * <code>context.write(key, value)</code> to finish the execution with this
 	 * key.
 	 */
-	@SuppressWarnings("unused")
 	@Override
-	protected void reduce(BarWritable key, Iterable<NullWritable> values,
+	protected void reduce(NullWritable nil, Iterable<FloatWritable> values,
 			Context context) throws IOException, InterruptedException {
-		int contador = 0;
-		for (NullWritable unused : values) {
-			contador++;
+
+		Iterator<FloatWritable> it = values.iterator();
+		if (!it.hasNext()) {
+			return;
 		}
-		context.write(key, new IntWritable(contador));
+		float first = it.next().get();
+
+		float min = first;
+		float max = first;
+
+		for (Iterator<FloatWritable> i = it; i.hasNext();) {
+			float elem = i.next().get();
+			if (elem < min) {
+				min = elem;
+			}
+			if (elem > max) {
+				max = elem;
+			}
+		}
+
+		context.write(NullWritable.get(), new FloatWritable(min));
+		context.write(NullWritable.get(), new FloatWritable(max));
 	}
 
 	/**
